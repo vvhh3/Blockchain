@@ -26,17 +26,17 @@ const Conectwallet = ({provaider, setSigner,signer}) =>{
         }
     })
     const disconnect = () => {
-        localStorage.removeItem('satusAuth');
+        localStorage.removeItem('statusAuth');
         setSigner(null);
     }
     useEffect(()=>{
         check_connect()
-    },[])
+    },[signer,provaider])
     return(
        <>
        {signer ? (<>
             <p>{signer.address}</p>
-            <button className="disconnect" onClick={() => disconnect()}>Выход</button>
+            <button onClick={() => disconnect()}>Выход</button>
         </>) : (<>
             <button  onClick={() => connect()}>Вход</button>
         </>)}
