@@ -31,7 +31,7 @@ const Conectwallet = ({provaider, setSigner,signer}) =>{
     }
     useEffect(()=>{
         check_connect()
-    },[signer,provaider])
+    },[provaider])
     return(
        <>
        {signer ? (<>
