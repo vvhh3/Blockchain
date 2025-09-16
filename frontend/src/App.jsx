@@ -10,6 +10,7 @@ import DAO_json from '../../hardhat/artifacts/contracts/DAO.sol/DAO.json'
 
 import Conectwallet from './Components/ConectWallet'
 import AddPropose from './Components/AddPropose'
+import AllPropose from './Components/AllPropose';
 function App() {
   const [signer, setSigner] = useState();
   const [provaider, setProvaider] = useState();
@@ -51,6 +52,7 @@ function App() {
     <>
       <AddPropose ethers={ethers} DAO={DAO} signer={signer}/>
       <Conectwallet signer={signer} provaider={provaider} setSigner={setSigner} />
+      <AllPropose signer={signer} DAO={DAO} provaider={provaider}/>
     </>
   )
 }

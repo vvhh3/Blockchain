@@ -272,8 +272,10 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
     }
 
 
+     function getAllProposals() public view returns (Propose[] memory) {
+        return proposeActive;
+    }
     
-
     function votingDelay() public view virtual override returns (uint256) {
         //устанавливает через скоько будет голосование после создания предложения
         return 1 days;

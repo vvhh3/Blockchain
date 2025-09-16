@@ -1,6 +1,6 @@
 import '../App.css'
 import { ethers } from "ethers";
-
+import AllPropose from './AllPropose';
 import { useEffect, useState, useCallback } from 'react';
 const AddPropose = ({ ethers, DAO, signer }) => {
     const [propose, setPropose] = useState({
@@ -14,9 +14,9 @@ const AddPropose = ({ ethers, DAO, signer }) => {
             count_no: 0,
             quorum: 0
         },
-        owner: '',
+        owner:'',
         isActive: true
-    });
+    })
     const addPropose = async () => {
         if (!DAO || !signer) {
             alert("DAO или signer не подключены");
