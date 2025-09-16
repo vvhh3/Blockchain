@@ -69,12 +69,24 @@ const AllPropose = ({ }) => {
             }
             if (quorum === 1) {
                 if(variant === true){
-                    const tx = await Daoconnect.quorumMechanikBigCounter(idPropose, variant)
+                    const tx = await Daoconnect.quarumMechanikSuperMajority(idPropose, variant)
                     await tx.wait();
                     alert("Успешно проголосовали")
                 }
                 if(variant === false){
-                    const tx = await Daoconnect.quorumMechanikBigCounter(idPropose, variant)
+                    const tx = await Daoconnect.quarumMechanikSuperMajority(idPropose, variant)
+                    await tx.wait();
+                    alert("Успешно проголосовали")
+                }
+            }
+            if (quorum === 2) {
+                if(variant === true){
+                    const tx = await Daoconnect.quorumMechanikVotesByCount(idPropose, variant)
+                    await tx.wait();
+                    alert("Успешно проголосовали")
+                }
+                if(variant === false){
+                    const tx = await Daoconnect.quorumMechanikVotesByCount(idPropose, variant)
                     await tx.wait();
                     alert("Успешно проголосовали")
                 }
