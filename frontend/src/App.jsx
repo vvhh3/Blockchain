@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import { useEffect } from 'react';
+import { useEffect,useLayoutEffect  } from 'react';
 import { ethers } from 'ethers';
 
 import profi_json from '../../hardhat/artifacts/contracts/PROFI.sol/PROFI.json'
@@ -11,6 +11,7 @@ import DAO_json from '../../hardhat/artifacts/contracts/DAO.sol/DAO.json'
 import Conectwallet from './Components/ConectWallet'
 import AddPropose from './Components/AddPropose'
 import AllPropose from './Components/AllPropose';
+import Registration from './Components/Registration'
 function App() {
   const [signer, setSigner] = useState();
   const [provaider, setProvaider] = useState();
@@ -39,7 +40,7 @@ function App() {
       console.log(error)
     }
   }, [])
-  useEffect(() => {
+  useLayoutEffect(() => {
     const profi = new ethers.Contract(profi_json.address, profi_json.abi, provaider)
     setPROFI(profi);
     const rtk = new ethers.Contract(RTK_json.address, RTK_json.abi, provaider)
@@ -47,9 +48,10 @@ function App() {
     const dao = new ethers.Contract(DAO_json.address, DAO_json.abi, provaider)
     setDAO(dao);
   }, [])
-
+  
   return (
     <>
+      <Registration DAO={DAO} signer={signer}/>
       <AddPropose ethers={ethers} DAO={DAO} signer={signer}/>
       <Conectwallet signer={signer} provaider={provaider} setSigner={setSigner} />
       <AllPropose signer={signer} DAO={DAO} provaider={provaider}/>
