@@ -2,8 +2,13 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import DAO_json from '../../../hardhat/artifacts/contracts/DAO.sol/DAO.json'
 
-const AllPropose = ({ DAO}) => {
+const AllPropose = ({ DAO }) => {
     const [proposals, setProposals] = useState([]);
+    const [valueToken, setValueToken] = useState(0)
+
+    const [owner, setOwner] = useState('')
+    const [delegateValue, setDelegateValue] = useState(0)
+    const [delegateAmount, setDelegateAmount] = useState(0)
     const provider = new ethers.BrowserProvider(window.ethereum);
     const DaoConnect = new ethers.Contract(DAO_json.address, DAO_json.abi, provider);
 
@@ -48,50 +53,59 @@ const AllPropose = ({ DAO}) => {
             console.error(error);
         }
     };
-
-    const AddVoice = async (idPropose,quorum,variant) => {
+    const delegate = async (proposeId, owner, delegateAmount ) => {
+        try {
+            const tx = await DAO.delegate(proposeId,owner,delegateAmount)
+            await tx.wait()
+            alert("Успешно")
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    const AddVoice = async (idPropose, quorum, variant, value) => {
         // const provaider = new ethers.BrowserProvider(window.ethereum)
         // const signer = await provaider.getSigner()
         // const Daoconnect = new ethers.Contract(DAO_json.address, DAO_json.abi, signer)
         try {
             if (quorum === 0) {
-                if(variant === true){
+                if (variant === true) {
                     const tx = await DAO.quorumMechanikBigCounter(idPropose, variant)
                     await tx.wait();
                     alert("Успешно проголосовали")
                 }
-                if(variant === false){
+                if (variant === false) {
                     const tx = await DAO.quorumMechanikBigCounter(idPropose, variant)
                     await tx.wait();
                     alert("Успешно проголосовали")
                 }
             }
             if (quorum === 1) {
-                if(variant === true){
+                if (variant === true) {
                     const tx = await DAO.quarumMechanikSuperMajority(idPropose, variant)
                     await tx.wait();
                     alert("Успешно проголосовали")
                 }
-                if(variant === false){
+                if (variant === false) {
                     const tx = await DAO.quarumMechanikSuperMajority(idPropose, variant)
                     await tx.wait();
                     alert("Успешно проголосовали")
                 }
             }
             if (quorum === 2) {
-                if(variant === true){
-                    const tx = await DAO.quorumMechanikVotesByCount(idPropose, variant)
+                if (variant === true) {
+                    const tx = await DAO.quorumMechanikVotesByCount(idPropose, value, variant)
                     await tx.wait();
                     alert("Успешно проголосовали")
                 }
-                if(variant === false){
-                    const tx = await DAO.quorumMechanikVotesByCount(idPropose, variant)
+                if (variant === false) {
+                    const tx = await DAO.quorumMechanikVotesByCount(idPropose, value, variant)
                     await tx.wait();
                     alert("Успешно проголосовали")
                 }
             }
+            location.reload()
         } catch (error) {
-            alert("Вы уже голосовали")
+            alert("Попробуйте ещё раз")
             console.error(error)
         }
     }
@@ -117,9 +131,22 @@ const AllPropose = ({ DAO}) => {
                     <p>За: {p.voting.count_yes}</p>
                     <p>Против: {p.voting.count_no}</p>
                     <p>Тип кворума: {p.voting.quorum}</p>
+                    <p>Делегировать</p>
+                    <input value={owner} type="text" placeholder="адресс кому вы хотите делегировать" onChange={(e) => setOwner(e.target.value)}/>
+                    <p>сколько хотите токенов хотите делегировать</p>
+                    <input value={delegateAmount} type="number" onChange={(e) => setDelegateAmount(e.target.value)}/>
+                    <button onClick={() => delegate(p.id, owner,delegateAmount)}>Делегировать</button>
                     <button onClick={() => deletedPropose(p.id)}>Удалить предложение</button>
-                    <button onClick={() =>AddVoice(p.id,p.voting.quorum,true)}>За</button>
-                    <button onClick={() => AddVoice(p.id,p.voting.quorum,false)}>Против</button>
+                    <button onClick={() => AddVoice(p.id, p.voting.quorum, true, valueToken)}>За</button>
+                    <button onClick={() => AddVoice(p.id, p.voting.quorum, false, valueToken)}>Против</button>
+                    {p.voting.quorum === 2 ?
+                        <div>
+                            ВВОДИТЬ КОЛ-ВО ТОКЕНОВ КОТОРОЕ ХОТИТЕ ОТДАТЬ ЗА СВОЙ ГОЛОС   <input value={valueToken} type="number" onChange={(e) => setValueToken(e.target.value)} />
+                        </div>
+                        : <>
+
+                        </>
+                    }
 
                 </div>
             ))}

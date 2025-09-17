@@ -82,13 +82,30 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
     ) Governor("DAO") GovernorVotes(IVotes(profi)) GovernorVotesQuorumFraction(4){
             PROFi = ERC20(profi);
             RTK = ERC20(rtk);
+        usersMap[0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266].name = "Tom";
+        usersMap[0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266].statys = true;
+
+        usersMap[0x70997970C51812dc3A010C7d01b50e0d17dc79C8].name = "Ben";
+        usersMap[0x70997970C51812dc3A010C7d01b50e0d17dc79C8].statys = true;
+
+        usersMap[0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC].name = "Rick";
+        usersMap[0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC].statys = true;
+
+        usersMap[0x90F79bf6EB2c4f870365E785982E1f101E93b906].name = "Jack";
+        usersMap[0x90F79bf6EB2c4f870365E785982E1f101E93b906].statys = false;
+
+        usersMap[0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65].name = "Startup A";
+        usersMap[0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65].statys = false;
+
+        usersMap[0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc].name = "Fond";
+        usersMap[0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc].statys = false;
     }
     modifier  onlyMajority(uint proposeId){
-         require(proposeActive[proposeId].category == ProposeType.A|| proposeActive[proposeId].category == ProposeType.B, unicode"НЕВЕРНАЯ КАТЕГОРИЯ У propose");
+        require(proposeActive[proposeId].category == ProposeType.C||proposeActive[proposeId].category == ProposeType.D||proposeActive[proposeId].category == ProposeType.E||proposeActive[proposeId].category == ProposeType.F,unicode"НЕВЕРНАЯ КАТЕГОРИЯ У propose");
         _;
     }
     modifier onlyCount(uint proposeId){
-            require(proposeActive[proposeId].category == ProposeType.C||proposeActive[proposeId].category == ProposeType.D||proposeActive[proposeId].category == ProposeType.E||proposeActive[proposeId].category == ProposeType.F,unicode"НЕВЕРНАЯ КАТЕГОРИЯ У propose");
+         require(proposeActive[proposeId].category == ProposeType.A|| proposeActive[proposeId].category == ProposeType.B, unicode"НЕВЕРНАЯ КАТЕГОРИЯ У propose");
         _;
     }
 
@@ -261,7 +278,7 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
 
     function delegate(uint proposeId,address _delegateToUser,uint amount) public { 
         require(true == whoVoted[_delegateToUser][proposeId]);
-        require(usersMap[msg.sender].statys == false, unicode"НЕДОСТУПНО ДЛЯ УЧАСТНИКА DAO");
+        require(usersMap[msg.sender].statys == true, unicode"НЕДОСТУПНО ДЛЯ УЧАСТНИКА DAO");
         RTK.transferFrom(msg.sender,address(this),amount *(3* (10**11)));
         if(whoVoiceByPropoce[_delegateToUser][proposeId] == VoiseType.Yes){//ГОЛОС ЗА ДА
             proposeActive[proposeId].voting.count_yes = proposeActive[proposeId].voting.count_yes + amount;

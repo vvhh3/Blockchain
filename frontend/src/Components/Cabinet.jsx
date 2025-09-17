@@ -29,6 +29,8 @@ const Cabinet = ({ PROFI, RTK, signer,provaider }) => {
         if(!isNaN(Number(value)) && Number(value >=1));
         const tx = await RTK.buyToken({value:String(Number(value * 10**18))});
         await tx.wait()
+        alert("Успешно")
+        location.reload()
     }
     useEffect(() => {``
         getBalance();
@@ -40,6 +42,8 @@ const Cabinet = ({ PROFI, RTK, signer,provaider }) => {
                 <p>Баланс PROFi:{balancePROFi}</p>
                 <p>Баланс RTK:{balanceRTK}</p>
                 <p>Баланс Wei:{balanceWei}</p>
+                <h1>ФОРМА ДЛЯ ПОКУПКИ ТОКЕНОВ</h1>
+                <p>Вводить кол-во токенов котрое хотите купить</p>
                 <input type="number" value={valueRTk} onChange={(e) => setValueRTK(e.target.value)}/>
                 <button onClick={() => BuyToken(valueRTk)}>Купить RTK коины</button>
 

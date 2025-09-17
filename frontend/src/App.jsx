@@ -13,6 +13,7 @@ import AddPropose from './Components/AddPropose'
 import AllPropose from './Components/AllPropose';
 import Registration from './Components/Registration'
 import Cabinet from './Components/Cabinet'
+
 function App() {
   const [signer, setSigner] = useState();
   const [provaider, setProvaider] = useState();
@@ -21,26 +22,7 @@ function App() {
   const [RTK, setRTK] = useState();
   const [DAO, setDAO] = useState();
 
-  // const [voting, setVoting] = useState({status: 0,start_time: 0,end_time: 0,description: '',count_yes: 0,count_no: 0,quorum: 0});
-  // const [propose, setPropose] = useState({category: 0, voting: voting, owner: '',isActive: false});
-  // const proposeType = ["none", "A", "B", "C", "D", "E", "F"];
-  // const votingStatus = ["waiting", "accept", "not_accept", "deleted"];
-  // const quorumType = ["majority", "super_majority", "votes_by_count"];
-  // const voiceType = ["none", "Yes", "No"];
 
-  // useEffect(() => {
-  //   try {
-  //     if (window.ethereum) {
-  //       const provaider = new ethers.BrowserProvider(window.ethereum);
-  //       setProvaider(provaider);
-  //     } else {
-  //       alert("Установите metamask")
-  //     }
-
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }, [])
 useLayoutEffect(() => {
   const setupContracts = async () => {
     const provider = new ethers.BrowserProvider(window.ethereum);

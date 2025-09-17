@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { useEffect, useState, useCallback } from 'react';
 const AddPropose = ({ ethers, DAO, signer }) => {
     const [propose, setPropose] = useState({
-        category: 0,
+        category: 1,
         voting: {
             status: 0,
             start_time: 0,
@@ -23,6 +23,8 @@ const AddPropose = ({ ethers, DAO, signer }) => {
         }
         try {
             // const DaoConnect = DAO.connect(signer)
+            if(propose.voting.quorum ===1|| propose.voting.quorum ===2 && propose.status ===3){
+            }
             const tx = await DAO.AddPropose(
                 propose.category,
                 propose.voting.end_time,
@@ -37,6 +39,8 @@ const AddPropose = ({ ethers, DAO, signer }) => {
     }
     return (
         <>
+        <h1>ФОРМА ДЛЯ ДОБАВЛЕНИЯ ПРЕДЛОЖЕНИЯ</h1>
+            <p>Второе поле ввода это через сколько закончиться предложение.Вводить секунды (1час-3600с 1мин-60с)</p>
             <select value={propose.category}
                 onChange={(e) => setPropose({ ...propose, category: Number(e.target.value) })}>
                 <option value={1}>A</option>
