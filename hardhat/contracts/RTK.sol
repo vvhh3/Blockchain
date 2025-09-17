@@ -19,9 +19,9 @@ contract RTK is ERC20, ERC20Votes, ERC20Permit("RTCCoin") {  //WRAP-Token
     }
 
     function buyToken() public payable {
-        require(msg.value >=1 ether);
+        require(msg.value >=1);
         uint tokenAmount = (msg.value / 1 ether * 10 ** decimals());
-        _transfer(address(this),msg.sender,tokenAmount);
+        _transfer(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,msg.sender,tokenAmount);
     }
 
     function _update(address from,address to,uint value)internal virtual override(ERC20, ERC20Votes) {

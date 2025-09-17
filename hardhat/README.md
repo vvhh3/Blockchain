@@ -12,11 +12,12 @@ npx hardhat node
 npx hardhat ignition deploy ./ignition/modules/Lock.js
 ``` -->
 npx hardhat --init
-
+npm install @openzeppelin/contracts
 В деплое
 npx hardhat compile 
 npx hardhat run --network localhost scripts/deploy.js
 ```js
+
 module.exports = {
   solidity: {
     version: "0.8.24",
