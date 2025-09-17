@@ -47,9 +47,6 @@ const AddPropose = ({ ethers, DAO, signer }) => {
                 <option value={5}>E</option>
                 <option value={6}>F</option>
             </select>
-            {/* <input value={propose.voting.start_time}
-                type='num'
-                onChange={(e) => setPropose({ ...propose,voting: {...propose.voting, start_time: Number(e.target.value)} })} /> */}
             <input value={propose.voting.end_time}
                 type='number'
                 onChange={(e) => setPropose({ ...propose, voting: { ...propose.voting, end_time: Number(e.target.value) } })} />
