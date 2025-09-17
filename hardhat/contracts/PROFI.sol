@@ -9,9 +9,9 @@ contract PROFI is ERC20,ERC20Votes,ERC20Permit{//СИСТЕМНЫЙ ТОКЕН
 
     constructor() ERC20("Profesional", "PROFI") ERC20Permit("Profesional"){
         _mint(msg.sender,100000 *10 **decimals());
-        _transfer(msg.sender,0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2,25000 *10 **decimals());
-        _transfer(msg.sender,0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db,25000 *10 **decimals());
-        _transfer(msg.sender,0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB,25000 *10 **decimals());
+        _transfer(msg.sender,0x70997970C51812dc3A010C7d01b50e0d17dc79C8,25000 *10 **decimals());
+        _transfer(msg.sender,0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC,25000 *10 **decimals());
+        _transfer(msg.sender,0x90F79bf6EB2c4f870365E785982E1f101E93b906,25000 *10 **decimals());
     }
     function transferFrom(address from,address to,uint256 value)public override returns(bool){
         _transfer(from,to,value);

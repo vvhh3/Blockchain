@@ -2,19 +2,18 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import DAO_json from '../../../hardhat/artifacts/contracts/DAO.sol/DAO.json'
 
-const AllPropose = ({ }) => {
+const AllPropose = ({ DAO}) => {
     const [proposals, setProposals] = useState([]);
     const provider = new ethers.BrowserProvider(window.ethereum);
     const DaoConnect = new ethers.Contract(DAO_json.address, DAO_json.abi, provider);
 
     const deletedPropose = async (propId) => {
         try {
-            // console.log(propId)
-            const provaider = new ethers.BrowserProvider(window.ethereum)
-            const signer = await provaider.getSigner();
-            const Dao = new ethers.Contract(DAO_json.address, DAO_json.abi, signer)
+            // const provaider = new ethers.BrowserProvider(window.ethereum)
+            // const signer = await provaider.getSigner();
+            // const Dao = new ethers.Contract(DAO_json.address, DAO_json.abi, signer)
 
-            const tx = await Dao.deletePropose(propId)
+            const tx = await DAO.deletePropose(propId)
             await tx.wait()
             loadAllProposals();
 
@@ -51,42 +50,42 @@ const AllPropose = ({ }) => {
     };
 
     const AddVoice = async (idPropose,quorum,variant) => {
-        const provaider = new ethers.BrowserProvider(window.ethereum)
-        const signer = await provaider.getSigner()
-        const Daoconnect = new ethers.Contract(DAO_json.address, DAO_json.abi, signer)
+        // const provaider = new ethers.BrowserProvider(window.ethereum)
+        // const signer = await provaider.getSigner()
+        // const Daoconnect = new ethers.Contract(DAO_json.address, DAO_json.abi, signer)
         try {
             if (quorum === 0) {
                 if(variant === true){
-                    const tx = await Daoconnect.quorumMechanikBigCounter(idPropose, variant)
+                    const tx = await DAO.quorumMechanikBigCounter(idPropose, variant)
                     await tx.wait();
                     alert("Успешно проголосовали")
                 }
                 if(variant === false){
-                    const tx = await Daoconnect.quorumMechanikBigCounter(idPropose, variant)
+                    const tx = await DAO.quorumMechanikBigCounter(idPropose, variant)
                     await tx.wait();
                     alert("Успешно проголосовали")
                 }
             }
             if (quorum === 1) {
                 if(variant === true){
-                    const tx = await Daoconnect.quarumMechanikSuperMajority(idPropose, variant)
+                    const tx = await DAO.quarumMechanikSuperMajority(idPropose, variant)
                     await tx.wait();
                     alert("Успешно проголосовали")
                 }
                 if(variant === false){
-                    const tx = await Daoconnect.quarumMechanikSuperMajority(idPropose, variant)
+                    const tx = await DAO.quarumMechanikSuperMajority(idPropose, variant)
                     await tx.wait();
                     alert("Успешно проголосовали")
                 }
             }
             if (quorum === 2) {
                 if(variant === true){
-                    const tx = await Daoconnect.quorumMechanikVotesByCount(idPropose, variant)
+                    const tx = await DAO.quorumMechanikVotesByCount(idPropose, variant)
                     await tx.wait();
                     alert("Успешно проголосовали")
                 }
                 if(variant === false){
-                    const tx = await Daoconnect.quorumMechanikVotesByCount(idPropose, variant)
+                    const tx = await DAO.quorumMechanikVotesByCount(idPropose, variant)
                     await tx.wait();
                     alert("Успешно проголосовали")
                 }
@@ -97,18 +96,6 @@ const AllPropose = ({ }) => {
         }
     }
 
-    // return(
-    //     <>
-    //         <input type="number" value={idPropose} onChange={(e) => setIdPropose(e.target.value)} />
-    //         <select value={variant}
-    //         onChange={(e) => setVariant(e.target.value)}>
-    //             <option value={true}>True</option>
-    //             <option value={false}>False</option>
-    //         </select>
-    //         <button onClick={AddVoiceYes}>За</button>
-    //         <button onClick={AddVoiceNo}>Против</button>
-    //     </>
-    // )
     useEffect(() => {
         loadAllProposals();
     }, [loadAllProposals]);

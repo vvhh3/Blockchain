@@ -12,6 +12,7 @@ import Conectwallet from './Components/ConectWallet'
 import AddPropose from './Components/AddPropose'
 import AllPropose from './Components/AllPropose';
 import Registration from './Components/Registration'
+import Cabinet from './Components/Cabinet'
 function App() {
   const [signer, setSigner] = useState();
   const [provaider, setProvaider] = useState();
@@ -27,30 +28,43 @@ function App() {
   // const quorumType = ["majority", "super_majority", "votes_by_count"];
   // const voiceType = ["none", "Yes", "No"];
 
-  useEffect(() => {
-    try {
-      if (window.ethereum) {
-        const provaider = new ethers.BrowserProvider(window.ethereum);
-        setProvaider(provaider);
-      } else {
-        alert("Установите metamask")
-      }
+  // useEffect(() => {
+  //   try {
+  //     if (window.ethereum) {
+  //       const provaider = new ethers.BrowserProvider(window.ethereum);
+  //       setProvaider(provaider);
+  //     } else {
+  //       alert("Установите metamask")
+  //     }
 
-    } catch (error) {
-      console.log(error)
-    }
-  }, [])
-  useLayoutEffect(() => {
-    const profi = new ethers.Contract(profi_json.address, profi_json.abi, provaider)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }, [])
+useLayoutEffect(() => {
+  const setupContracts = async () => {
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+
+    const profi = new ethers.Contract(profi_json.address, profi_json.abi, signer);
     setPROFI(profi);
-    const rtk = new ethers.Contract(RTK_json.address, RTK_json.abi, provaider)
+
+    const rtk = new ethers.Contract(RTK_json.address, RTK_json.abi, signer);
     setRTK(rtk);
-    const dao = new ethers.Contract(DAO_json.address, DAO_json.abi, provaider)
+
+    const dao = new ethers.Contract(DAO_json.address, DAO_json.abi, signer);
     setDAO(dao);
-  }, [])
+
+    setSigner(signer);
+    setProvaider(provider);
+  };
+
+  setupContracts();
+}, []);
   
   return (
     <>
+      <Cabinet RTK ={RTK} PROFI={PROFI} signer={signer} provaider={provaider}/>
       <Registration DAO={DAO} signer={signer}/>
       <AddPropose ethers={ethers} DAO={DAO} signer={signer}/>
       <Conectwallet signer={signer} provaider={provaider} setSigner={setSigner} />

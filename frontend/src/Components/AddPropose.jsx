@@ -22,8 +22,8 @@ const AddPropose = ({ ethers, DAO, signer }) => {
             return;
         }
         try {
-            const DaoConnect = DAO.connect(signer)
-            const tx = await DaoConnect.AddPropose(
+            // const DaoConnect = DAO.connect(signer)
+            const tx = await DAO.AddPropose(
                 propose.category,
                 propose.voting.end_time,
                 propose.voting.description,

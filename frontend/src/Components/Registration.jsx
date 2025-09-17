@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import DAO_json from '../../../hardhat/artifacts/contracts/DAO.sol/DAO.json'
 
 const Registration =({DAO,signer}) =>{
-    const [user,setUser] = useState({owner:'',name:'',status:false})
+    const [user,setUser] = useState({owner:'',name:'',status:true})
 
     const [users,setUsers] = useState([])
     const provider = new ethers.BrowserProvider(window.ethereum);
@@ -14,8 +14,7 @@ const Registration =({DAO,signer}) =>{
             alert("DAO или signer не подключенны")
         }
         try{
-            const DaoConnect = DAO.connect(signer)
-            const tx = await DaoConnect.AddRegister(user.name)
+            const tx = await DAO.AddRegister(user.name)
             await tx.wait()
             alert("Регистрация пройдена")
             console.log(user)
@@ -30,7 +29,7 @@ const Registration =({DAO,signer}) =>{
             const allUser = tx.map(u =>({
                 owner: u.owner,
                 name: u.name,
-                status:u.status
+                status: u.status ? "Зарегистрирован":" Не зарегистрированный"
             }))
             setUsers(allUser)
         }catch(error){
@@ -46,10 +45,13 @@ const Registration =({DAO,signer}) =>{
             <button onClick={addUser}>Зарегистрироваться</button>
             <p>Список всех пользователей</p>
             {users.map((u) =>{
+                return(
                 <div key={u.id}>
                     <p>Адрес:{u.owner}</p>
                     <p>Имя: {u.name}</p>
                 </div>
+
+                )
             })}
         </>
     )
