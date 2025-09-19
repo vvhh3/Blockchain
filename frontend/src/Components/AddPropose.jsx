@@ -34,6 +34,7 @@ const AddPropose = ({ ethers, DAO, signer }) => {
             await tx.wait();
             alert("Предложение добавленно")
         } catch (error) {
+            alert(error)
             console.log(error)
         }
     }

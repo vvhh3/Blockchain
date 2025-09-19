@@ -51,6 +51,7 @@ const AllPropose = ({ DAO }) => {
             setProposals(formatted);
         } catch (error) {
             console.error(error);
+            alert(error)
         }
     };
     const delegate = async (proposeId, owner, delegateAmount ) => {
@@ -59,6 +60,7 @@ const AllPropose = ({ DAO }) => {
             await tx.wait()
             alert("Успешно")
         } catch (error) {
+            alert(error)
             console.log(error)
         }
     }
@@ -105,7 +107,7 @@ const AllPropose = ({ DAO }) => {
             }
             location.reload()
         } catch (error) {
-            alert("Попробуйте ещё раз")
+            alert(error)
             console.error(error)
         }
     }

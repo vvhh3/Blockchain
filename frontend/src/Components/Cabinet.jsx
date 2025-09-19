@@ -10,11 +10,11 @@ const Cabinet = ({ PROFI, RTK, signer,provaider }) => {
         if (!PROFI || !signer) return
         try {
             const newBalanceProfi = await PROFI.balanceOf(signer.address)
-            const parsedProfi = Number(newBalanceProfi) / 10 ** 12;
+            const parsedProfi = Number(newBalanceProfi);
             setBalanceProfi(parsedProfi)
 
             const newBalanceRTK = await RTK.balanceOf(signer.address)
-            const parsedRTK = Number(newBalanceRTK) / 10 ** 12;
+            const parsedRTK = Number(newBalanceRTK);
             setBalanceRTK(parsedRTK)
 
             const newBalanceWei = await provaider.getBalance(signer.address)
@@ -22,15 +22,21 @@ const Cabinet = ({ PROFI, RTK, signer,provaider }) => {
             setBalanceWei(parsedWei)
 
         } catch (error) {
+            alert(error)
             console.log(error)
         }
     }
     const BuyToken = async (value) => {
-        if(!isNaN(Number(value)) && Number(value >=1));
-        const tx = await RTK.buyToken({value:String(Number(value * 10**18))});
-        await tx.wait()
-        alert("Успешно")
-        location.reload()
+        try{
+            if(!isNaN(Number(value)) && Number(value >=1));
+            const tx = await RTK.buyToken({value:String(Number(value * 10**18))});
+            await tx.wait()
+            alert("Успешно")
+            location.reload()
+        }catch(error){
+            console.log(error)
+            alert(error)
+        }
     }
     useEffect(() => {``
         getBalance();

@@ -176,7 +176,7 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
     }
     function AddPropose(ProposeType _category, uint _voting,string memory description,QuorumType _quorum) public {
           if(_category == ProposeType.C || _category == ProposeType.D ||_category == ProposeType.E||_category == ProposeType.F){
-            require(_quorum == QuorumType.votes_by_count,unicode"НЕВЕРНЫЙ КВОРУМ" );
+            require(_quorum == QuorumType.super_majority || _quorum == QuorumType.majority,unicode"НЕВЕРНЫЙ КВОРУМ" );
           Voting memory newVoting = Voting(
             votingStatus.waiting,
             block.timestamp,
@@ -197,7 +197,7 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
             allPropoceCount =  allPropoceCount + 1; 
         }
         if(_category == ProposeType.A || _category == ProposeType.B){
-            require(_quorum == QuorumType.super_majority|| _quorum == QuorumType.majority, unicode"НЕВЕРНЫЙ КВОРУМ" );
+            require(_quorum == QuorumType.votes_by_count, unicode"НЕВЕРНЫЙ КВОРУМ" );
           Voting memory newVoting = Voting(
             votingStatus.waiting,
             block.timestamp,
@@ -225,7 +225,7 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
     }
     uint val = 1;
     function quorumMechanikBigCounter(uint _idPropose,bool variant) public onlyMajority(_idPropose) { //первый тип кворума
-        require(false == whoVoted[msg.sender][_idPropose],unicode"ВЫ УЖЕ ГОЛОСОВАЛИ");
+        require(true == whoVoted[msg.sender][_idPropose],unicode"ВЫ УЖЕ ГОЛОСОВАЛИ");
         require(false != proposeActive[_idPropose].isActive, unicode"ГОЛОСОВАНИЕ ОКОНЧЕННО");
         PROFi.transferFrom(msg.sender, address(this), val * ( 3 *(10**12)));
         if (variant == true){
@@ -242,7 +242,7 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
         }
     }
     function quarumMechanikSuperMajority(uint _idPropose,bool variant) public onlyMajority(_idPropose) { //второй тип кворума
-        require(false == whoVoted[msg.sender][_idPropose],unicode"ВЫ УЖЕ ГОЛОСОВАЛИ");
+        require(true == whoVoted[msg.sender][_idPropose],unicode"ВЫ УЖЕ ГОЛОСОВАЛИ");
         require(false != proposeActive[_idPropose].isActive, unicode"ГОЛОСОВАНИЕ ОКОНЧЕННО");
         PROFi.transferFrom(msg.sender, address(this), val * ( 3 *(10**12)));
         if (variant == true){
@@ -259,7 +259,7 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
         }
     }
     function quorumMechanikVotesByCount(uint _idPropose,uint value, bool variant) public onlyCount(_idPropose) { // третий тип кворума
-        require(false == whoVoted[msg.sender][_idPropose],unicode"ВЫ УЖЕ ГОЛОСОВАЛИ");
+        require(true == whoVoted[msg.sender][_idPropose],unicode"ВЫ УЖЕ ГОЛОСОВАЛИ");
         require(true == proposeActive[_idPropose].isActive);
             PROFi.transferFrom(msg.sender, address(this), value * ( 3 *(10**12)));
             if(variant == true){

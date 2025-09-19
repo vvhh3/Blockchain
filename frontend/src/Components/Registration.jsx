@@ -20,7 +20,7 @@ const Registration = ({ DAO, signer }) => {
 
             console.log(user)
         } catch (error) {
-            console.log(user)
+            alert(error)
             console.log(error)
         }
     }
@@ -34,6 +34,7 @@ const Registration = ({ DAO, signer }) => {
             }))
             setUsers(allUser)
         } catch (error) {
+            alert(error)
             console.log(error)
         }
     }
