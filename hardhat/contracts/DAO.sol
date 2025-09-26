@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
-
+//ДОДЕЛАТЬ УДАЛЕНИЕ ПРИ 50на50
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-// import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/governance/Governor.sol";
-// import "@openzeppelin/contracts/governance/utils/IVotes.sol";
+import "@openzeppelin/contracts/governance/utils/IVotes.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
@@ -62,6 +62,13 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
         Yes,
         No
     }
+    event EventAddRegistration(address owner,string name,bool status);
+    event EventPropose(ProposeType _category, uint _voting,string description,QuorumType _quorum);
+    event EventDeletePropose(uint _idPropose);
+    event EventQuorumMechanikBigCounter(uint _idPropose,bool variant);//эвент для обычного голосования
+    event EventquarumMechanikSuperMajority(uint _idPropose,bool variant);
+    event EventquorumMechanikVotesByCount(uint _idPropose,uint value, bool variant);
+    event EventDelegate(uint proposeId,address _delegateToUser,uint amount);
 
     Propose[] public proposeActive;
     Propose[] public  History; // список типов предложений
@@ -82,33 +89,18 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
     ) Governor("DAO") GovernorVotes(IVotes(profi)) GovernorVotesQuorumFraction(4){
             PROFi = ERC20(profi);
             RTK = ERC20(rtk);
-        usersMap[0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266].name = "Tom";
-        usersMap[0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266].statys = true;
-
-        usersMap[0x70997970C51812dc3A010C7d01b50e0d17dc79C8].name = "Ben";
-        usersMap[0x70997970C51812dc3A010C7d01b50e0d17dc79C8].statys = true;
-
-        usersMap[0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC].name = "Rick";
-        usersMap[0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC].statys = true;
-
-        usersMap[0x90F79bf6EB2c4f870365E785982E1f101E93b906].name = "Jack";
-        usersMap[0x90F79bf6EB2c4f870365E785982E1f101E93b906].statys = false;
-
-        usersMap[0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65].name = "Startup A";
-        usersMap[0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65].statys = false;
-
-        usersMap[0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc].name = "Fond";
-        usersMap[0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc].statys = false;
     }
     modifier  onlyMajority(uint proposeId){
-        require(proposeActive[proposeId].category == ProposeType.C||proposeActive[proposeId].category == ProposeType.D||proposeActive[proposeId].category == ProposeType.E||proposeActive[proposeId].category == ProposeType.F,unicode"НЕВЕРНАЯ КАТЕГОРИЯ У propose");
+        require(proposeActive[proposeId].category == ProposeType.A|| proposeActive[proposeId].category == ProposeType.B,unicode"Не верная категория");
         _;
     }
     modifier onlyCount(uint proposeId){
-         require(proposeActive[proposeId].category == ProposeType.A|| proposeActive[proposeId].category == ProposeType.B, unicode"НЕВЕРНАЯ КАТЕГОРИЯ У propose");
+            require(proposeActive[proposeId].category == ProposeType.C|| proposeActive[proposeId].category == ProposeType.D||proposeActive[proposeId].category == ProposeType.E||proposeActive[proposeId].category == ProposeType.F, unicode"Не верная категория");
         _;
     }
-
+     function getAllProposals() public view returns (Propose[] memory) {
+        return proposeActive;
+    }
     function CheckMajority(uint proposeId) public { // для первого типа кворума
         uint realTime = block.timestamp;
         if (realTime >= proposeActive[proposeId].voting.end_time){
@@ -169,14 +161,18 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
         user memory newUser = user({owner:msg.sender,name: name,statys:true});
         usersMap[msg.sender] = newUser;
         users.push(usersMap[msg.sender]);
+        emit EventAddRegistration(msg.sender,name,true);
     }
 
     function getAllUsers() public view returns ( user[] memory) {
         return users;
     }
+    // function getAllProposals() public view returns(Propose[] memory){
+    //     return proposeActive;
+    // }
     function AddPropose(ProposeType _category, uint _voting,string memory description,QuorumType _quorum) public {
           if(_category == ProposeType.C || _category == ProposeType.D ||_category == ProposeType.E||_category == ProposeType.F){
-            require(_quorum == QuorumType.super_majority || _quorum == QuorumType.majority,unicode"НЕВЕРНЫЙ КВОРУМ" );
+             require(QuorumType.majority == _quorum||QuorumType.super_majority == _quorum,unicode"НЕВЕРНАЯ КАТЕГОРИЯ у propose");
           Voting memory newVoting = Voting(
             votingStatus.waiting,
             block.timestamp,
@@ -197,8 +193,8 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
             allPropoceCount =  allPropoceCount + 1; 
         }
         if(_category == ProposeType.A || _category == ProposeType.B){
-            require(_quorum == QuorumType.votes_by_count, unicode"НЕВЕРНЫЙ КВОРУМ" );
-          Voting memory newVoting = Voting(
+           require(_quorum == QuorumType.votes_by_count,unicode"НЕВЕРНАЯ КАТЕГОРИЯ У propose");   
+            Voting memory newVoting = Voting(
             votingStatus.waiting,
             block.timestamp,
             block.timestamp + _voting,
@@ -217,15 +213,17 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
             proposeActive.push(newPropose);
             allPropoceCount =  allPropoceCount + 1; 
         }
+        emit EventPropose(_category, _voting, description, _quorum);
     }
 
     function deletePropose(uint _idPropose) public {
         require(msg.sender == proposeActive[_idPropose].owner,unicode"ТОЛЬКО ВЛАДЕЛЦ ПРЕДЛОЖЕНИЯ МОЖЕТ УДАЛЯТЬ ЕГО");
         proposeActive[_idPropose].voting.status = votingStatus.deleted;
+        emit EventDeletePropose(_idPropose);
     }
     uint val = 1;
     function quorumMechanikBigCounter(uint _idPropose,bool variant) public onlyMajority(_idPropose) { //первый тип кворума
-        require(true == whoVoted[msg.sender][_idPropose],unicode"ВЫ УЖЕ ГОЛОСОВАЛИ");
+        require(false == whoVoted[msg.sender][_idPropose],unicode"ВЫ УЖЕ ГОЛОСОВАЛИ");
         require(false != proposeActive[_idPropose].isActive, unicode"ГОЛОСОВАНИЕ ОКОНЧЕННО");
         PROFi.transferFrom(msg.sender, address(this), val * ( 3 *(10**12)));
         if (variant == true){
@@ -240,9 +238,10 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
             whoVoiceByPropoce[msg.sender][_idPropose] = VoiseType.No;
             CheckMajority(_idPropose);
         }
+        emit EventQuorumMechanikBigCounter(_idPropose,variant);
     }
     function quarumMechanikSuperMajority(uint _idPropose,bool variant) public onlyMajority(_idPropose) { //второй тип кворума
-        require(true == whoVoted[msg.sender][_idPropose],unicode"ВЫ УЖЕ ГОЛОСОВАЛИ");
+        require(false == whoVoted[msg.sender][_idPropose],unicode"ВЫ УЖЕ ГОЛОСОВАЛИ");
         require(false != proposeActive[_idPropose].isActive, unicode"ГОЛОСОВАНИЕ ОКОНЧЕННО");
         PROFi.transferFrom(msg.sender, address(this), val * ( 3 *(10**12)));
         if (variant == true){
@@ -257,9 +256,10 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
             whoVoiceByPropoce[msg.sender][_idPropose] = VoiseType.No;
             CheckSuperMajority(_idPropose);
         }
+        emit EventquarumMechanikSuperMajority(_idPropose,variant);
     }
     function quorumMechanikVotesByCount(uint _idPropose,uint value, bool variant) public onlyCount(_idPropose) { // третий тип кворума
-        require(true == whoVoted[msg.sender][_idPropose],unicode"ВЫ УЖЕ ГОЛОСОВАЛИ");
+        require(false == whoVoted[msg.sender][_idPropose],unicode"ВЫ УЖЕ ГОЛОСОВАЛИ");
         require(true == proposeActive[_idPropose].isActive);
             PROFi.transferFrom(msg.sender, address(this), value * ( 3 *(10**12)));
             if(variant == true){
@@ -274,11 +274,12 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
                 whoVoiceByPropoce[msg.sender][_idPropose] = VoiseType.No;
                 CheckCount(_idPropose);
             }
+            emit EventquorumMechanikVotesByCount(_idPropose,value,variant);
     }
 
     function delegate(uint proposeId,address _delegateToUser,uint amount) public { 
         require(true == whoVoted[_delegateToUser][proposeId]);
-        require(usersMap[msg.sender].statys == true, unicode"НЕДОСТУПНО ДЛЯ УЧАСТНИКА DAO");
+        require(usersMap[msg.sender].statys == false, unicode"НЕДОСТУПНО ДЛЯ УЧАСТНИКА DAO");
         RTK.transferFrom(msg.sender,address(this),amount *(3* (10**11)));
         if(whoVoiceByPropoce[_delegateToUser][proposeId] == VoiseType.Yes){//ГОЛОС ЗА ДА
             proposeActive[proposeId].voting.count_yes = proposeActive[proposeId].voting.count_yes + amount;
@@ -286,13 +287,12 @@ contract DAO is Governor, GovernorVotes, GovernorVotesQuorumFraction, GovernorCo
         if(whoVoiceByPropoce[_delegateToUser][proposeId] == VoiseType.No){//ГОЛОС ЗА НЕТ
             proposeActive[proposeId].voting.count_no = proposeActive[proposeId].voting.count_no + amount;
         }
+        emit EventDelegate(proposeId,_delegateToUser,amount);
     }
 
 
-     function getAllProposals() public view returns (Propose[] memory) {
-        return proposeActive;
-    }
     
+
     function votingDelay() public view virtual override returns (uint256) {
         //устанавливает через скоько будет голосование после создания предложения
         return 1 days;
